@@ -38,27 +38,30 @@ const {data , type} = req.body;
         break;
     }
 
-      case 'user.updated':{
+  case 'user.updated': {
+  const userData = {
+    email: data.email_addresses[0].email_address,
+    photo: data.image_url,
+    firstName: data.first_name,
+    lastName: data.last_name,
+  };
 
-    
-        const userData = {
-          email: data.email_addresses[0].email_address,
-          photo: data.image_url,
-          firstName: data.first_name,
-          lastName: data.last_name,
-        }
 
-        await userData.findOneAndUpdate(
-          { clerkId: data.id },
-          userData,
-          { new: true}
-        );
-        res.json({});
+  const updatedUser = await User.findOneAndUpdate(
+    { clerkId: data.id },  
+    userData,              
+    { new: true }          
+  );
 
-        console.log('User updated:', updatedUser);
-        break;
-    }
+  if (!updatedUser) {
+    console.error('User not found with clerkId:', data.id);
+    return res.status(404).json({ error: 'User not found' });
+  }
 
+  console.log('User updated:', updatedUser);
+  return res.json(updatedUser);  // Send back the updated user
+  break;
+}
       case 'user.deleted':{
 
 
