@@ -152,3 +152,39 @@ dist
 .svelte-kit
 
 # End of https://www.toptal.com/developers/gitignore/api/node
+
+# ======================
+# 100% IGNORE node_modules
+# ======================
+**/node_modules/*
+node_modules/
+/server/node_modules/
+/client/node_modules/
+*/node_modules*
+
+# ======================
+# Nuclear-proof ENV ignores
+# ======================
+.env
+*.env
+**/.env*
+server/.env
+client/.env
+!.env.example  # Keep template if needed
+
+# ======================
+# System/IDE files
+# ======================
+.DS_Store
+.idea/
+.vscode/
+*.log
+npm-debug.log*
+
+# ======================
+# Build artifacts
+# ======================
+dist/
+build/
+.next/
+out/
