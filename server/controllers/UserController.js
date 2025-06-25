@@ -40,7 +40,6 @@ const {data , type} = req.body;
 
       case 'user.updated':{
 
-    
         const userData = {
           email: data.email_addresses[0].email_address,
           photo: data.image_url,
@@ -48,7 +47,7 @@ const {data , type} = req.body;
           lastName: data.last_name,
         }
 
-        await userData.findOneAndUpdate(
+        const updatedUser = await userModel.findOneAndUpdate(
           { clerkId: data.id },
           userData,
           { new: true}
