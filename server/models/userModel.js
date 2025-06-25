@@ -26,6 +26,6 @@ const userSchema = new mongoose.Schema({
 });
 
 // Use consistent model naming (e.g., "User" instead of "user")
-const User = mongoose.models.User || mongoose.model("User", userSchema);
+const userModel = mongoose.models.User || mongoose.model("User", userSchema);
 
-export default User;
+export default userModel;
