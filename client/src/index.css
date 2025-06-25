@@ -1,0 +1,26 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Outfit:wght@100..900&display=swap');
+@import "tailwindcss";
+
+*{
+    font-family: outfit;
+}
+
+.slider{
+    -webkit-appearance:none ;
+    height: 100%;
+    background: transparent;
+}
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-image: url(/slide_icon.svg); 
+    background-position: center;
+    background-size:cover ;
+    background-repeat: no-repeat;
+}
+
+.bg-layer{
+    background-image: url(/bg_layer.png);
+}
