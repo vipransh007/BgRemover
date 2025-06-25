@@ -1,87 +1,82 @@
-// import { Webhook } from 'svix';
-// import User from '../models/UserModel.js';
+import { Webhook } from 'svix';
+import userModel from '../models/userModel.js'
+;
 
 // http://localhost:4000/api/user/webhooks
 
 
-// const clerkWebhooks = async (req, res) => {
-//   const payload = req.body.toString();
-//   console.log("📩 Raw Payload:", payload);
+const clerkWebHooks =  async (req, res) => {
 
-//   try {
-//     const whook = new Webhook(process.env.CLERK_WEBHOOK_SECRET);
-//     await whook.verify(payload, {
-//       "svix-id": req.headers['svix-id'],
-//       "svix-timestamp": req.headers['svix-timestamp'] || '',
-//       "svix-signature": req.headers['svix-signature']
-//     });
+  try {
+    const whook = new Webhook(process.env.CLERK_WEBHOOK_SECRET);
 
-//     const { data, type } = JSON.parse(payload);
-//     console.log("🔄 Processing:", type, "ID:", data.id);
+    await whook.verify(JSON.stringify(req.body),{
+    "svix-id": req.headers['svix-id'],
+    "svix-timestamp": req.headers['svix-timestamp'],
+    "svix-signature": req.headers['svix-signature'],
+  });
 
-//     // Defensive checks for required fields
-//     const email = data.email_addresses?.[0]?.email_address || data.email_address || '';
-//     const photo = data.image_url || '';
-//     if (!data.id || !email || !photo) {
-//       console.error("❌ Missing required user fields", { id: data.id, email, photo });
-//       return res.status(400).json({ error: 'Missing required user fields', id: data.id, email, photo });
-//     }
 
-//     const userData = {
-//       clerkId: data.id,
-//       email,
-//       firstName: data.first_name || '',
-//       lastName: data.last_name || '',
-//       photo,
-//     };
 
-//     switch (type) {
-//       case "user.created":
-//         // Only create if not exists
-//         await User.create(userData)
-//           .then(user => console.log("💾 Saved user:", user.email))
-//           .catch(err => console.error("❌ Save failed:", err, payload));
-//         break;
-//       case "user.updated":
-//         // Update if exists, otherwise do nothing
-//         await User.findOneAndUpdate(
-//           { clerkId: data.id },
-//           { $set: userData },
-//           { new: true }
-//         )
-//           .then(user => {
-//             if (user) {
-//               console.log(`🔄 Updated user: ${user.email}`);
-//             } else {
-//               console.log(`⚠️ User not found for update: ${data.id}`);
-//             }
-//           })
-//           .catch(err => {
-//             console.error("❌ Update failed:", err, payload);
-//           });
-//         break;
-//       case "user.deleted":
-//         await User.findOneAndDelete({ clerkId: data.id })
-//           .then(user => {
-//             if (user) {
-//               console.log(`🗑️ Deleted user: ${user.email}`);
-//             } else {
-//               console.log(`🗑️ User not found for deletion: ${data.id}`);
-//             }
-//           })
-//           .catch(err => {
-//             console.error("❌ Delete failed:", err, payload);
-//           });
-//         break;
-//       default:
-//         console.log(`ℹ️ Unhandled webhook event type: ${type}`);
-//     }
+const {data , type} = req.body;
 
-//     return res.json({ success: true });
-//   } catch (err) {
-//     console.error("💥 CRITICAL ERROR:", err, payload, err.stack);
-//     return res.status(500).json({ error: err.message });
-//   }
-// };
+    switch (type) {
+      case 'user.created':{
 
-// export { clerkWebhooks };
+        const userData = {
+          clerkId: data.id,
+          email: data.email_addresses[0].email_address,
+          photo: data.image_url,
+          firstName: data.first_name,
+          lastName: data.last_name,
+        }
+
+        await userModel.create(userData);
+        res.json({});
+
+        console.log('New user created:', newUser);
+        break;
+    }
+
+      case 'user.updated':{
+
+    
+        const userData = {
+          email: data.email_addresses[0].email_address,
+          photo: data.image_url,
+          firstName: data.first_name,
+          lastName: data.last_name,
+        }
+
+        await userData.findOneAndUpdate(
+          { clerkId: data.id },
+          userData,
+          { new: true}
+        );
+        res.json({});
+
+        console.log('User updated:', updatedUser);
+        break;
+    }
+
+      case 'user.deleted':{
+
+
+        await userModel.deleteOne({ clerkId: data.id });
+        res.json({});
+        console.log('User deleted:', data.id);
+        break;
+      }
+      
+      default:{
+        console.log('Unhandled event type:', type);
+    }
+}
+    
+} catch (error) {
+    console.error('Webhook verification failed:', error);
+    return res.status(400).json({ error: 'Invalid webhook signature' });
+  }
+}
+
+export {clerkWebHooks};
