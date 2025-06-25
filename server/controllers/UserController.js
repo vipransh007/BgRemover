@@ -78,4 +78,22 @@ const {data , type} = req.body;
   }
 }
 
-export {clerkWebHooks};
+
+
+const userCredits = async (req, res) => {
+  try {
+    const  {clerkId} = req.body;
+    const userData = await userModel.findOne({clerkId});
+    
+    res.json({success:true,  credits:userData.creditBalance})
+    
+  } catch (error) {
+    console.error('Webhook verification failed:', error);
+    return res.status(400).json({ error: 'Invalid webhook signature' });
+  }
+  
+}
+
+
+
+export {clerkWebHooks , userCredits};
