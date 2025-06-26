@@ -5,6 +5,7 @@ import cors from 'cors';
 // import { connect } from 'mongoose';
 import connectDB from "./configs/mongodb.js";
 import userRouter from "./routes/userRoutes.js";
+import imageRouter from "./routes/imageRoutes.js";
 
 const PORT = process.env.PORT || 4000;
 
@@ -22,6 +23,7 @@ const startServer = async () => {
   });
 
   app.use('/api/user', userRouter);
+  app.use('/api/image', imageRouter);
 
   app.listen(PORT, "0.0.0.0", () => {
     console.log(`Server is running on http://localhost:${PORT}`);

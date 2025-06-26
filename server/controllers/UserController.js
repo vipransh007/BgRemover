@@ -82,16 +82,13 @@ const {data , type} = req.body;
 
 const userCredits = async (req, res) => {
   try {
-    const  {clerkId} = req.body;
+    const clerkId = req.clerkId;
     const userData = await userModel.findOne({clerkId});
-    
-    res.json({success:true,  credits:userData.creditBalance})
-    
+    res.json({success:true,  credits:userData.creditBalance});
   } catch (error) {
-    console.error('Webhook verification failed:', error);
-    return res.status(400).json({ error: 'Invalid webhook signature' });
+    console.error('Credit fetch failed:', error);
+    return res.status(400).json({ error: 'Invalid request' });
   }
-  
 }
 
 
